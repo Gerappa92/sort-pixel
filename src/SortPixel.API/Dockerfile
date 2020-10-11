@@ -7,16 +7,16 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
-COPY ["SortPixel/SortPixel.csproj", "SortPixel/"]
-RUN dotnet restore "SortPixel/SortPixel.csproj"
+COPY ["SortPixel.API/SortPixel.API.csproj", "SortPixel.API/"]
+RUN dotnet restore "SortPixel.API/SortPixel.API.csproj"
 COPY . .
-WORKDIR "/src/SortPixel"
-RUN dotnet build "SortPixel.csproj" -c Release -o /app/build
+WORKDIR "/src/SortPixel.API"
+RUN dotnet build "SortPixel.API.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "SortPixel.csproj" -c Release -o /app/publish
+RUN dotnet publish "SortPixel.API.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "SortPixel.dll"]
+ENTRYPOINT ["dotnet", "SortPixel.API.dll"]
