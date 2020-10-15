@@ -2,16 +2,15 @@
 using System.IO;
 using System.Threading.Tasks;
 
-namespace SortPixel.Services.FilterServices
+namespace SortPixel.Services.FilterServices.FilterStrategies
 {
-    public class FilterImageService : IFilterService
+    public class RotateColorsStrategy : FilterStrategyAbstract
     {
-        public Task<byte[]> RotateImageColor(Stream stream)
+        public override Task<byte[]> Filter(Stream stream)
         {
             var task = new Task<byte[]>(() =>
             {
                 var bitmap = new Bitmap(stream);
-                var matrix = new int[bitmap.Width, bitmap.Height];
                 for (int i = 0; i < bitmap.Width; i++)
                 {
                     for (int j = 0; j < bitmap.Height; j++)
@@ -25,13 +24,7 @@ namespace SortPixel.Services.FilterServices
                         bitmap.SetPixel(i, j, color);
                     }
                 }
-                byte[] result;
-                using (MemoryStream ms = new MemoryStream())
-                {
-                    bitmap.Save(ms, bitmap.RawFormat);
-                    result = ms.ToArray();
-                }
-                return result;
+                return BitmapToByteArray(bitmap);
             });
             task.Start();
             return task;

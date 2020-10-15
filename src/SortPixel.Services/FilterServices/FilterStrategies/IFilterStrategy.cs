@@ -1,9 +1,9 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
 
-namespace SortPixel.Services
+namespace SortPixel.Services.FilterServices.FilterStrategies
 {
-    public interface IFilterService
+    public interface IFilterStrategy
     {
         Task<byte[]> Filter(Stream stream);
     }
