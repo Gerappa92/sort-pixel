@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SortPixel.Services.FilterServices;
+using SortPixel.Services.FilterServices.FilterStrategies;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,8 +9,14 @@ namespace SortPixel.API.Controllers
 {
     public class FilterImageController : BaseController
     {
-        [HttpPost("rotate-image")]
-        public async Task<IActionResult> Sort()
+        [HttpPost("rotate-colors")]
+        public async Task<IActionResult> RotateColors() => await Filter(new RotateColorsStrategy());
+
+        [HttpPost("left-neighbor")]
+        public async Task<IActionResult> LeftNeighbor() => await Filter(new LeftNeighborStrategy());
+
+
+        private async Task<IActionResult> Filter(IFilterStrategy filterStrategy)
         {
             var file = HttpContext.Request.Form?.Files?.FirstOrDefault();
             if (file == null)
@@ -21,10 +28,12 @@ namespace SortPixel.API.Controllers
             using (MemoryStream ms = new MemoryStream())
             {
                 await file.CopyToAsync(ms);
-                var sortService = new FilterImageService();
-                result = await sortService.RotateImageColor(ms);
+                var sortService = new FilterService(filterStrategy);
+                result = await sortService.Filter(ms);
             }
             return File(result, file.ContentType);
         }
+
+
     }
 }
