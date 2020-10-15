@@ -37,6 +37,17 @@ namespace SortPixel.Services.SortServices
             }
         }
 
+        protected byte[] BitmapToByteArray(Bitmap bitmap)
+        {
+            byte[] result;
+            using (MemoryStream ms = new MemoryStream())
+            {
+                bitmap.Save(ms, bitmap.RawFormat);
+                result = ms.ToArray();
+            }
+            return result;
+        }
+
         protected int SumRGB(Color color) => color.R + color.G + color.B;
     }
 }

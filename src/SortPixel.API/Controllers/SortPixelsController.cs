@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SortPixel.Services.SortServices;
+using SortPixel.Services.SortServices.SortStrategies;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,8 +9,13 @@ namespace SortPixel.API.Controllers
 {
     public class SortPixelsController : BaseController
     {
-        [HttpPost("selection-sort")]
-        public async Task<IActionResult> Sort()
+        [HttpPost("selection")]
+        public async Task<IActionResult> Selection() => await Sort(new SelectionSort());
+
+        [HttpPost("bubble")]
+        public async Task<IActionResult> Bubble() => await Sort(new BubbleSort());
+
+        private async Task<IActionResult> Sort(ISortStrategy sortStrategy)
         {
             var file = HttpContext.Request.Form?.Files?.FirstOrDefault();
             if (file == null)
@@ -21,7 +27,7 @@ namespace SortPixel.API.Controllers
             using (MemoryStream ms = new MemoryStream())
             {
                 await file.CopyToAsync(ms);
-                var sortService = new SortPixelsService(new SelectionSort());
+                var sortService = new SortPixelsService(sortStrategy);
                 result = await sortService.SortPixels(ms);
             }
             return File(result, file.ContentType);
