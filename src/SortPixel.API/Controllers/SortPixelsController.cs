@@ -15,6 +15,9 @@ namespace SortPixel.API.Controllers
         [HttpPost("bubble")]
         public async Task<IActionResult> Bubble() => await Sort(new BubbleSort());
 
+        [HttpPost("insertion")]
+        public async Task<IActionResult> Insertion() => await Sort(new InsertionSort());
+
         private async Task<IActionResult> Sort(ISortStrategy sortStrategy)
         {
             var file = HttpContext.Request.Form?.Files?.FirstOrDefault();
